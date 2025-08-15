@@ -182,10 +182,9 @@ class PlatformUtils:
                     try:
                         win32print.StartPagePrinter(printer_handle)
                         
-                        # Read and send file data
-                        with open(file_path, 'rb') as f:
-                            data = f.read()
-                            win32print.WritePrinter(printer_handle, data)
+                        # Read and process file data with proper line endings
+                        data = self._prepare_windows_print_data(file_path)
+                        win32print.WritePrinter(printer_handle, data)
                             
                         win32print.EndPagePrinter(printer_handle)
                         win32print.EndDocPrinter(printer_handle)
@@ -215,11 +214,16 @@ class PlatformUtils:
     def _print_file_windows_powershell(self, file_path: str, printer_name: str, options: Dict) -> bool:
         """Print file on Windows using PowerShell"""
         try:
+            # For text files, create a properly formatted temporary file
+            processed_file = file_path
+            if file_path.lower().endswith('.txt'):
+                processed_file = self._create_windows_text_file(file_path)
+            
             # Build PowerShell command
             ps_script = f"""
             $printer = Get-Printer -Name '{printer_name}'
             if ($printer) {{
-                Start-Process -FilePath '{file_path}' -Verb Print -WindowStyle Hidden
+                Start-Process -FilePath '{processed_file}' -Verb Print -WindowStyle Hidden
             }} else {{
                 Write-Error "Printer not found"
             }}
@@ -227,6 +231,13 @@ class PlatformUtils:
             
             cmd = ['powershell', '-Command', ps_script]
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            
+            # Clean up temporary file if created
+            if processed_file != file_path:
+                try:
+                    os.unlink(processed_file)
+                except Exception:
+                    pass
             
             return result.returncode == 0
             
@@ -448,3 +459,54 @@ class PlatformUtils:
                 os.chmod(file_path, st.st_mode | stat.S_IEXEC)
             except Exception:
                 pass
+                
+    def _prepare_windows_print_data(self, file_path: str) -> bytes:
+        """Prepare file data for Windows printing with proper line endings"""
+        try:
+            # Check if it's a text file
+            if file_path.lower().endswith('.txt'):
+                # Read text file and normalize line endings
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    
+                # Normalize to Windows CRLF line endings
+                normalized_content = '\r\n'.join(content.splitlines())
+                if not normalized_content.endswith('\r\n'):
+                    normalized_content += '\r\n'
+                    
+                return normalized_content.encode('utf-8')
+            else:
+                # For non-text files, read as binary
+                with open(file_path, 'rb') as f:
+                    return f.read()
+                    
+        except Exception as e:
+            print(f"Error preparing Windows print data: {e}")
+            # Fallback: read as binary
+            with open(file_path, 'rb') as f:
+                return f.read()
+                
+    def _create_windows_text_file(self, file_path: str) -> str:
+        """Create a properly formatted temporary text file for Windows printing"""
+        try:
+            # Read original text file
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                
+            # Normalize line endings to Windows CRLF
+            normalized_content = '\r\n'.join(content.splitlines())
+            if not normalized_content.endswith('\r\n'):
+                normalized_content += '\r\n'
+                
+            # Create temporary file with proper line endings
+            temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.txt', 
+                                                  delete=False, encoding='utf-8')
+            temp_file.write(normalized_content)
+            temp_file.close()
+            
+            print(f"Created Windows-formatted text file: {temp_file.name}")
+            return temp_file.name
+            
+        except Exception as e:
+            print(f"Error creating Windows text file: {e}")
+            return file_path  # Return original file as fallback
