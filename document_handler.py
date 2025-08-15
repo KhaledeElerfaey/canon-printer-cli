@@ -72,12 +72,19 @@ class DocumentHandler:
             # Read and reformat if needed
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
+            
+            # Ensure proper line endings (CRLF for printing)
+            # This ensures each line has proper carriage return + line feed for printing
+            normalized_content = '\r\n'.join(content.splitlines())
+            if not normalized_content.endswith('\r\n'):
+                normalized_content += '\r\n'
                 
             # Create a temporary formatted file
-            temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False)
-            temp_file.write(content)
+            temp_file = tempfile.NamedTemporaryFile(mode='wb', suffix='.txt', delete=False)
+            temp_file.write(normalized_content.encode('utf-8'))
             temp_file.close()
             
+            print(f"Processed text file with proper line endings: {temp_file.name}")
             return temp_file.name
             
         except Exception as e:
@@ -346,8 +353,8 @@ class DocumentHandler:
 72 720 moveto
 """
             
-            # Split content into lines and add PostScript commands
-            lines = content.split('\n')
+            # Split content into lines properly (handle both \n and \r\n)
+            lines = content.splitlines()
             y_position = 720
             
             for line in lines:
@@ -395,8 +402,12 @@ class DocumentHandler:
             # Set top margin
             pcl_data.extend(b'\x1b\x26\x6c\x36\x45')     # ESC&l6E (top margin 6 lines)
             
-            # Add the text content
-            pcl_data.extend(content.encode('utf-8'))
+            # Ensure proper line endings in PCL
+            lines = content.splitlines()
+            for line in lines:
+                # Add each line with explicit CR+LF
+                pcl_data.extend(line.encode('utf-8'))
+                pcl_data.extend(b'\r\n')  # Explicit CR+LF for each line
             
             # Form feed to eject page
             pcl_data.extend(b'\x0c')

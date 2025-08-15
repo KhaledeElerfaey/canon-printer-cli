@@ -1,0 +1,7 @@
+Line 1: This is the first line of text
+Line 2: This is the second line of text
+Line 3: This is the third line with some special characters: !@#$%^&*()
+Line 4: Testing line breaks and formatting
+Line 5: Final line for testing
+
+This should print with proper line breaks now.
