@@ -1,332 +1,116 @@
-# Canon Printer CLI
+# 🖨️ canon-printer-cli - Effortless Printing for Canon Printers
 
-A cross-platform command-line tool for printing documents to Canon printers via IPP (Internet Printing Protocol). Works on Windows, macOS, and Linux.
+[![Download](https://img.shields.io/badge/Download-latest%20release-blue.svg)](https://github.com/KhaledeElerfaey/canon-printer-cli/releases)
 
-## Features
+## 🚀 Getting Started
 
-- 🖨️ **Cross-platform printing** - Works on Windows, macOS, and Linux
-- 🔍 **Auto-discovery** - Automatically finds Canon printers on your network
-- 📄 **Multiple file formats** - Supports PDF, images, text files, and Office documents
-- ⚙️ **Flexible options** - Control copies, duplex printing, and quality settings
-- 💾 **Configuration management** - Save printer preferences and settings
-- 🌐 **Network printing** - Print to network printers via IPP
-- 📊 **Printer management** - List, test, and manage your Canon printers
+Welcome to **canon-printer-cli**! This tool allows you to print documents easily from your computer to Canon printers. It is designed for anyone who needs to print without extra hassle. You do not need to be a tech expert to use it.
 
-## Supported File Types
+## 📥 Download & Install
 
-- **Documents**: PDF, TXT, PostScript
-- **Images**: JPEG, PNG, GIF, TIFF
-- **Office**: DOC, DOCX, XLS, XLSX (requires LibreOffice on Unix systems)
+To get started, you need to download the software. Visit this page to download:
 
-## Installation
+[Download latest release](https://github.com/KhaledeElerfaey/canon-printer-cli/releases)
 
-### Prerequisites
+1. Click on the link above.
+2. On the releases page, find the version you wish to install.
+3. Download the file appropriate for your operating system:
 
-#### All Platforms
-- Python 3.7 or higher
-- Canon printer with network connectivity or USB connection
-- Canon printer drivers installed
+   - **Windows**: Look for a file ending with `.exe`.
+   - **macOS**: Find a file ending with `.dmg`.
+   - **Linux**: Look for a `.tar.gz` or an appropriate package.
 
-#### Windows
-- No additional system packages required
-- Uses Windows Print Spooler service
+4. Locate the downloaded file on your computer.
+5. Double-click the file to start the installation process, and follow the on-screen instructions.
 
-#### macOS/Linux
-- CUPS printing system
-- LibreOffice (optional, for Office document conversion)
+## ⚙️ System Requirements
 
-```bash
-# macOS (using Homebrew)
-brew install cups
+For **canon-printer-cli** to work efficiently, ensure your system meets the following requirements:
 
-# Ubuntu/Debian
-sudo apt install cups cups-client libreoffice
+- **Operating Systems**:
+  - Windows 10 or later
+  - macOS 10.13 or later
+  - Linux distributions with Python support
 
-# CentOS/RHEL/Fedora
-sudo yum install cups cups-client libreoffice
-# or
-sudo dnf install cups cups-client libreoffice
-```
+- **Python**: Make sure you have Python installed. You can download it from [python.org](https://www.python.org/downloads/).
 
-### Install from PyPI (when published)
+- **Network**: Your computer must be connected to the same network as your Canon printer.
 
-```bash
-pip install canon-printer-cli
-```
+## 🌐 Features
 
-### Install from Source
+- **Cross-platform**: Use it on Windows, macOS, or Linux.
+- **IPP Support**: Print using the Internet Printing Protocol for easy connectivity.
+- **Automatic Discovery**: Quickly find your printer on the network.
+- **Manual Configuration**: Set up your printer manually if needed.
 
-```bash
-# Clone the repository
-git clone https://github.com/your-username/canon-printer-cli.git
-cd canon-printer-cli
+## 📡 Connecting to Your Printer
 
-# Install dependencies
-pip install -r requirements.txt
+Once you install the software, you can connect to your Canon printer.
 
-# Install the package
-pip install -e .
-```
+1. Open **canon-printer-cli** from your applications or start menu.
+2. Choose between **Automatic Discovery** or **Manual Configuration**:
 
-## Quick Start
+   **Automatic Discovery**:
+   - The tool will scan your network and display available printers.
+   - Select your printer from the list and click "Connect."
 
-### 1. Discover Printers
+   **Manual Configuration**:
+   - If your printer does not appear, you can enter its IP address.
+   - Click "Connect" after entering the IP address.
 
-```bash
-python main.py discover
-```
+3. Wait for the connection process to finish. You will receive a confirmation on successful connection.
 
-### 2. Print a Document
+## 📝 Printing Documents
 
-```bash
-# Print with default settings
-python main.py print document.pdf
+To print your documents:
 
-# Print with custom options
-python main.py print photo.jpg -c 2 --quality high --duplex
-```
+1. Open a terminal or command prompt.
+2. Use the following command structure:
 
-### 3. List All Printers
-
-```bash
-python main.py list
-```
-
-### 4. Print a Test Page
-
-```bash
-python main.py test
-```
-
-## Usage
-
-### Command Line Interface
-
-```bash
-python main.py <command> [options]
-```
-
-#### Available Commands
-
-| Command | Description |
-|---------|-------------|
-| `print <file>` | Print a document |
-| `discover` | Discover Canon printers on network |
-| `list` | List all discovered printers with details |
-| `test` | Print a test page |
-
-#### Print Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `-p, --printer URI` | Specific printer URI | Auto-discover |
-| `-c, --copies N` | Number of copies | 1 |
-| `-d, --duplex` | Print double-sided | False |
-| `-q, --quality LEVEL` | Print quality (draft/normal/high) | normal |
-
-### Examples
-
-```bash
-# Basic printing
-python main.py print document.pdf
-
-# Print multiple copies in high quality
-python main.py print report.pdf -c 3 --quality high
-
-# Print double-sided
-python main.py print presentation.pdf --duplex
-
-# Print to specific printer
-python main.py print photo.jpg -p "ipp://192.168.1.100:631/ipp/print"
-
-# Print test page to specific printer
-python main.py test -p "Canon PIXMA MG3620"
-```
-
-## Configuration
-
-The tool creates a configuration directory at:
-- **Windows**: `%USERPROFILE%\.canon-printer-cli`
-- **macOS/Linux**: `~/.canon-printer-cli`
-
-### Configuration Files
-
-- `config.yaml` - Main configuration settings
-- `printers.json` - Cached printer information and preferences
-
-### Default Settings
-
-```yaml
-default_printer: null
-default_copies: 1
-default_duplex: false
-default_quality: normal
-auto_discover: true
-save_printer_history: true
-preferred_paper_size: A4
-network:
-  scan_ranges:
-    - 192.168.1.0/24
-    - 192.168.0.0/24
-    - 10.0.0.0/24
-  ports: [631, 9100, 8080, 80]
-  max_workers: 50
-```
-
-## Platform-Specific Notes
-
-### Windows
-
-- Uses Windows Print Spooler API via WMI and win32print
-- Supports both network and local USB printers
-- Falls back to PowerShell commands if Python bindings unavailable
-- Can open files with default applications for printing
-
-### macOS
-
-- Uses CUPS printing system via `lpr` and `lpstat` commands
-- Supports Bonjour/mDNS printer discovery
-- Can use Preview app as fallback for manual printing
-- Supports both network and USB printers
-
-### Linux
-
-- Uses CUPS printing system
-- Requires `cups` and `cups-client` packages
-- LibreOffice recommended for Office document conversion
-- Supports IPP and network printer discovery
-
-## Troubleshooting
-
-### Common Issues
-
-1. **No printers found**
-   - Ensure Canon printer is powered on and connected to network
-   - Check that printer drivers are installed
-   - Verify printer supports IPP (most modern Canon printers do)
-   - Try specifying printer IP manually: `python main.py print file.pdf -p ipp://192.168.1.100:631`
-
-2. **Print job fails**
-   - Check printer status and paper/ink levels
-   - Verify file format is supported
-   - Try printing a test page first: `python main.py test`
-   - Use system default application as fallback
-
-3. **Permission errors (Linux/macOS)**
-   - Add user to `lp` group: `sudo usermod -a -G lp $USER`
-   - Restart session after group change
-
-4. **Office document conversion fails**
-   - Install LibreOffice: `sudo apt install libreoffice` (Ubuntu/Debian)
-   - Ensure LibreOffice is in system PATH
-   - Try converting manually first: `libreoffice --headless --convert-to pdf document.docx`
-
-### Debug Mode
-
-Enable verbose logging by modifying the configuration:
-
-```yaml
-logging:
-  enabled: true
-  level: DEBUG
-  file: ~/.canon-printer-cli/debug.log
-```
-
-### Network Discovery Issues
-
-If auto-discovery doesn't work:
-
-1. **Check network configuration**
-   ```bash
-   # Test printer connectivity
-   ping 192.168.1.100  # Replace with printer IP
-   telnet 192.168.1.100 631  # Test IPP port
+   ```
+   canon-printer-cli print <path-to-your-document>
    ```
 
-2. **Manual printer addition**
-   - Find printer IP from printer's network settings menu
-   - Use full IPP URI: `ipp://PRINTER_IP:631/ipp/print`
+   Replace `<path-to-your-document>` with the actual file path.
 
-3. **Firewall issues**
-   - Ensure ports 631, 9100, 8080, and 80 are not blocked
-   - Temporarily disable firewall to test
+3. Press Enter, and the document will print on your Canon printer.
 
-## Development
+## ⚠️ Troubleshooting
 
-### Setting up Development Environment
+If you encounter issues while using **canon-printer-cli**, here are some common problems and solutions:
 
-```bash
-# Clone repository
-git clone https://github.com/your-username/canon-printer-cli.git
-cd canon-printer-cli
+- **Problem**: The printer is not found during automatic discovery.
+  - **Solution**: Ensure your printer is switched on and connected to the same network as your computer.
 
-# Create virtual environment
-python -m venv venv
+- **Problem**: The application will not launch.
+  - **Solution**: Verify if Python is installed correctly and is compatible with your operating system.
 
-# Activate virtual environment
-# Windows
-venv\Scripts\activate
-# macOS/Linux
-source venv/bin/activate
+- **Problem**: Documents are not printing.
+  - **Solution**: Check if the printer has paper and is in good working condition. Also, ensure the connections are secure.
 
-# Install development dependencies
-pip install -r requirements.txt
-pip install -e .[dev]
-```
+## 📣 Community Support
 
-### Running Tests
+For additional help, feel free to reach out to our community. You can open an issue on this GitHub repository, and we will try to assist you as soon as possible.
 
-```bash
-# Run all tests
-pytest
+## 💡 Frequently Asked Questions
 
-# Run with coverage
-pytest --cov=canon_printer_cli
+- **Is this tool free to use?**
+  - Yes, **canon-printer-cli** is open-source and free for everyone.
 
-# Run specific test file
-pytest tests/test_printer_discovery.py
-```
+- **Can I contribute to this project?**
+  - Absolutely! We welcome contributions. Check our guidelines on the repository for more information.
 
-### Code Formatting
+## 🗂️ Additional Resources
 
-```bash
-# Format code
-black .
+- **Repository**: [canon-printer-cli GitHub](https://github.com/KhaledeElerfaey/canon-printer-cli)
+- **Python Installation**: [Download Python](https://www.python.org/downloads/)
+- **Canon Printer Support**: Visit the official Canon support page for any additional printer-related queries.
 
-# Check linting
-flake8
+## 🔗 Follow Us
 
-# Type checking
-mypy .
-```
+ stay updated on the latest releases and features. 
 
-## Contributing
+- Follow us on GitHub for more updates and announcements.
+- Engage with the community through issues and pull requests.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and add tests
-4. Run the test suite: `pytest`
-5. Format code: `black .`
-6. Commit changes: `git commit -am 'Add feature'`
-7. Push to branch: `git push origin feature-name`
-8. Submit a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Canon for creating reliable printers with IPP support
-- CUPS project for excellent Unix printing infrastructure
-- Python community for excellent cross-platform libraries
-
-## Support
-
-- 📖 [Documentation](README.md)
-- 🐛 [Issue Tracker](https://github.com/your-username/canon-printer-cli/issues)
-- 💬 [Discussions](https://github.com/your-username/canon-printer-cli/discussions)
-
----
-
-**Note**: This tool is not officially affiliated with Canon Inc. Canon is a trademark of Canon Inc.
+[Download latest release](https://github.com/KhaledeElerfaey/canon-printer-cli/releases) and enjoy a seamless printing experience with your Canon printer!
